@@ -1,0 +1,38 @@
+# 应用服务 WEB 访问端口
+server:
+  port: 8080
+
+
+spring:
+  profiles:
+    # 默认激活dev环境
+    active: dev
+
+# 已经在JacksonConfig中配置
+  #jackson:
+    # 设置后台返参，若字段值为 null, 则不返回
+    #default-property-inclusion: non_null
+      # 设置日期字段格式
+    #date-format: yyyy-MM-dd HH:mm:ss
+
+  # 设置单个文件的最大上传大小为 10MB
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      # 设置总请求（包括文件和其他表单数据）的最大大小为 10MB
+      max-request-size: 10MB
+jwt:
+  # 签发人
+  issuer: cishu
+  # 秘钥
+  secret: jElxcSUj38+Bnh73T68lNs0DfBSit6U3whQlcGO2XwnI+Bo3g4xsiCIPg8PV/L0fQMis08iupNwhe2PzYLB9Xg==
+  # token 过期时间（单位：分钟） 24*60
+  tokenExpireTime: 1440
+  # token 请求头中的 key 值
+  tokenHeaderKey: Authorization
+  # token 请求头中的 value 值前缀
+  tokenPrefix: Bearer
+
+
+
+
