@@ -1,0 +1,50 @@
+# 忽略操作系统生成的文件
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# 忽略日志文件夹和日志文件
+log/
+*.log
+
+# 忽略临时文件
+*.tmp
+*.swp
+*~
+
+# 忽略特定的临时文件（例如图片中显示的空文本文件）
+新建文本文档.txt
+
+# Spring Boot (weblog-springboot) 相关
+weblog-springboot/target/
+weblog-springboot/.mvn/
+weblog-springboot/mvnw
+weblog-springboot/mvnw.cmd
+weblog-springboot/*.jar
+weblog-springboot/*.war
+weblog-springboot/.classpath
+weblog-springboot/.project
+weblog-springboot/.settings/
+weblog-springboot/HELP.md
+
+# Vue.js (weblog-vue3) 相关
+weblog-vue3/node_modules/
+weblog-vue3/dist/
+weblog-vue3/.env*.local
+weblog-vue3/.env.*.local
+weblog-vue3/npm-debug.log*
+weblog-vue3/yarn-debug.log*
+weblog-vue3/yarn-error.log*
+weblog-vue3/.idea/
+weblog-vue3/.vscode/
+
+# IDE 相关文件夹
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# 编译输出
+out/
+build/
