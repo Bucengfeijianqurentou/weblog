@@ -132,6 +132,20 @@ public interface ArticleMapper extends BaseMapper<ArticleDO> {
 
 
 
+    /**
+     * 查询最大权重值记录
+     * @return
+     */
+    default ArticleDO selectMaxWeight() {
+        return selectOne(Wrappers.<ArticleDO>lambdaQuery()
+                .orderByDesc(ArticleDO::getWeight) // 按权重值降序排列
+                .last("LIMIT 1")); // 仅查询出一条
+    }
+
+
+
+
+
 
 
 
