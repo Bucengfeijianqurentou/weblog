@@ -145,6 +145,19 @@ public interface ArticleMapper extends BaseMapper<ArticleDO> {
 
 
 
+    /**
+     * 批量更新文章
+     * @param articleDO
+     * @param ids
+     * @return
+     */
+    default int updateByIds(ArticleDO articleDO, List<Long> ids) {
+        return update(articleDO, Wrappers.<ArticleDO>lambdaUpdate()
+                .in(ArticleDO::getId, ids));
+    }
+
+
+
 
 
 

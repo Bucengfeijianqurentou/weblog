@@ -1,6 +1,7 @@
 package com.cishu.weblog.admin.controller;
 
 import com.cishu.weblog.admin.model.vo.wiki.AddWikiReqVO;
+import com.cishu.weblog.admin.model.vo.wiki.DeleteWikiReqVO;
 import com.cishu.weblog.admin.service.AdminWikiService;
 import com.cishu.weblog.common.aspect.ApiOperationLog;
 import com.cishu.weblog.common.utils.Response;
@@ -30,5 +31,17 @@ public class AdminWikiController {
     public Response addWiki(@RequestBody @Validated AddWikiReqVO addWikiReqVO) {
         return wikiService.addWiki(addWikiReqVO);
     }
+
+
+
+
+    @PostMapping("/delete")
+    @ApiOperation(value = "知识库删除")
+    @ApiOperationLog(description = "知识库删除")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Response deleteWiki(@RequestBody @Validated DeleteWikiReqVO deleteWikiReqVO) {
+        return wikiService.deleteWiki(deleteWikiReqVO);
+    }
+
 
 }

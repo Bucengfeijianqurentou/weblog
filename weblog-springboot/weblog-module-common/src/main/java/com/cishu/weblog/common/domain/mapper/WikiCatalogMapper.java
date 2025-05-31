@@ -21,7 +21,7 @@ public interface WikiCatalogMapper extends InsertBatchMapper<WikiCatalogDO> {
     }
 
     /**
-     * 删除知识库
+     * 删除知识库目录
      * @param wikiId
      * @return
      */
