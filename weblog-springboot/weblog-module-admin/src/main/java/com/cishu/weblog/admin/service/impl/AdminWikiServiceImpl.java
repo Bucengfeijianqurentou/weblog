@@ -2,10 +2,7 @@ package com.cishu.weblog.admin.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cishu.weblog.admin.convert.WikiConvert;
-import com.cishu.weblog.admin.model.vo.wiki.AddWikiReqVO;
-import com.cishu.weblog.admin.model.vo.wiki.DeleteWikiReqVO;
-import com.cishu.weblog.admin.model.vo.wiki.FindWikiPageListReqVO;
-import com.cishu.weblog.admin.model.vo.wiki.FindWikiPageListRspVO;
+import com.cishu.weblog.admin.model.vo.wiki.*;
 import com.cishu.weblog.admin.service.AdminWikiService;
 import com.cishu.weblog.common.domain.dos.ArticleDO;
 import com.cishu.weblog.common.domain.dos.WikiCatalogDO;
@@ -152,6 +149,37 @@ public class AdminWikiServiceImpl implements AdminWikiService {
         }
 
         return PageResponse.success(wikiDOPage, vos);
+    }
+
+
+
+    // 省略...
+
+    /**
+     * 更新知识库置顶状态
+     *
+     * @param updateWikiIsTopReqVO
+     * @return
+     */
+    @Override
+    public Response updateWikiIsTop(UpdateWikiIsTopReqVO updateWikiIsTopReqVO) {
+        Long wikiId = updateWikiIsTopReqVO.getId();
+        Boolean isTop = updateWikiIsTopReqVO.getIsTop();
+
+        // 默认权重值为 0 ，即不参与置顶
+        Integer weight = 0;
+        // 若设置为置顶
+        if (isTop) {
+            // 查询最大权重值
+            WikiDO wikiDO = wikiMapper.selectMaxWeight();
+            Integer maxWeight = wikiDO.getWeight();
+            // 最大权重值加一
+            weight = maxWeight + 1;
+        }
+
+        // 更新该知识库的权重值
+        wikiMapper.updateById(WikiDO.builder().id(wikiId).weight(weight).build());
+        return Response.success();
     }
 
 

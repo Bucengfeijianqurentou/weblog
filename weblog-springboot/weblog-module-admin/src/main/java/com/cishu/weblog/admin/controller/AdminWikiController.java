@@ -3,6 +3,7 @@ package com.cishu.weblog.admin.controller;
 import com.cishu.weblog.admin.model.vo.wiki.AddWikiReqVO;
 import com.cishu.weblog.admin.model.vo.wiki.DeleteWikiReqVO;
 import com.cishu.weblog.admin.model.vo.wiki.FindWikiPageListReqVO;
+import com.cishu.weblog.admin.model.vo.wiki.UpdateWikiIsTopReqVO;
 import com.cishu.weblog.admin.service.AdminWikiService;
 import com.cishu.weblog.common.aspect.ApiOperationLog;
 import com.cishu.weblog.common.utils.Response;
@@ -52,6 +53,16 @@ public class AdminWikiController {
     public Response findWikiPageList(@RequestBody @Validated FindWikiPageListReqVO findWikiPageListReqVO) {
         return wikiService.findWikiPageList(findWikiPageListReqVO);
     }
+
+
+    @PostMapping("/isTop/update")
+    @ApiOperation(value = "更新知识库置顶状态")
+    @ApiOperationLog(description = "更新知识库置顶状态")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Response updateWikiIsTop(@RequestBody @Validated UpdateWikiIsTopReqVO updateWikiIsTopReqVO) {
+        return wikiService.updateWikiIsTop(updateWikiIsTopReqVO);
+    }
+
 
 
 }
