@@ -2,6 +2,7 @@ package com.cishu.weblog.admin.service;
 
 import com.cishu.weblog.admin.model.vo.wiki.AddWikiReqVO;
 import com.cishu.weblog.admin.model.vo.wiki.DeleteWikiReqVO;
+import com.cishu.weblog.admin.model.vo.wiki.FindWikiPageListReqVO;
 import com.cishu.weblog.common.utils.Response;
 
 public interface AdminWikiService {
@@ -23,6 +24,16 @@ public interface AdminWikiService {
      * @return
      */
     Response deleteWiki(DeleteWikiReqVO deleteWikiReqVO);
+
+
+
+    /**
+     * 知识库分页查询
+     * @param findWikiPageListReqVO
+     * @return
+     */
+    Response findWikiPageList(FindWikiPageListReqVO findWikiPageListReqVO);
+
 
 
 }
