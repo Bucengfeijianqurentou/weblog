@@ -153,7 +153,6 @@ public class AdminWikiServiceImpl implements AdminWikiService {
 
 
 
-    // 省略...
 
     /**
      * 更新知识库置顶状态
@@ -196,6 +195,30 @@ public class AdminWikiServiceImpl implements AdminWikiService {
         Boolean isPublish = updateWikiIsPublishReqVO.getIsPublish();
         // 更新发布状态
         wikiMapper.updateById(WikiDO.builder().id(wikiId).isPublish(isPublish).build());
+        return Response.success();
+    }
+
+
+
+    /**
+     * 更新知识库
+     *
+     * @param updateWikiReqVO
+     * @return
+     */
+    @Override
+    public Response updateWiki(UpdateWikiReqVO updateWikiReqVO) {
+        // VO 转 DO
+        WikiDO wikiDO = WikiDO.builder()
+                .id(updateWikiReqVO.getId())
+                .title(updateWikiReqVO.getTitle())
+                .cover(updateWikiReqVO.getCover())
+                .summary(updateWikiReqVO.getSummary())
+                .updateTime(LocalDateTime.now())
+                .build();
+
+        // 根据 ID 更新知识库
+        wikiMapper.updateById(wikiDO);
         return Response.success();
     }
 
