@@ -24,7 +24,7 @@ public interface ArticleMapper extends BaseMapper<ArticleDO> {
      * @param endDate 结束时间
      * @return
      */
-    default Page<ArticleDO> selectPageList(Long current, Long size, String title, LocalDate startDate, LocalDate endDate) {
+    default Page<ArticleDO> selectPageList(Long current, Long size, String title, LocalDate startDate, LocalDate endDate, Integer type) {
         // 分页对象(查询第几页、每页多少数据)
         Page<ArticleDO> page = new Page<>(current, size);
 
@@ -33,6 +33,7 @@ public interface ArticleMapper extends BaseMapper<ArticleDO> {
                 .like(StringUtils.isNotBlank(title), ArticleDO::getTitle, title) // like 模块查询
                 .ge(Objects.nonNull(startDate), ArticleDO::getCreateTime, startDate) // 大于等于 startDate
                 .le(Objects.nonNull(endDate), ArticleDO::getCreateTime, endDate)  // 小于等于 endDate
+                .eq(Objects.nonNull(type), ArticleDO::getType, type) // 文章类型
                 .orderByDesc(ArticleDO::getWeight) // 按权重倒序
                 .orderByDesc(ArticleDO::getCreateTime); // 按创建时间倒叙
 
