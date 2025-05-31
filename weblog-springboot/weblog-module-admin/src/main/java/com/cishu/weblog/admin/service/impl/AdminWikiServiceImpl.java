@@ -293,5 +293,116 @@ public class AdminWikiServiceImpl implements AdminWikiService {
 
 
 
+
+    /*
+    1.先将此知识库中的所有文章类型更新为普通；
+        查出此知识库下，所有文章 ID ;
+        更新 t_article 表，将文章类型 type 字段更新为普通；
+    2.删除此知识库下所有目录；
+    3.再重新根据入参，插入新的目录数据；
+        判断 catalogs 目录是否为空，若不为空，则重新设置 sort 排序字段的值；
+        循环 catalogs 目录，开始 VO 转 DO, 往数据库中插入新记录；
+        构建一级目录 DO 类， insert 一级目录记录，并拿到新插入的主键 ID；
+        获取此一级目录下的二级目录数据，VO 转 DO 类，最后调用 insertBatchSomeColumn() 方法，批量插入二级目录数据；
+        更新相关文章的 type 字段为知识库类型；
+        */
+
+    /**
+     * 更新知识库目录
+     *
+     * @param updateWikiCatalogReqVO
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Response updateWikiCatalogs(UpdateWikiCatalogReqVO updateWikiCatalogReqVO) {
+        // 知识库 ID
+        Long wikiId = updateWikiCatalogReqVO.getId();
+        // 目录
+        List<UpdateWikiCatalogItemReqVO> catalogs = updateWikiCatalogReqVO.getCatalogs();
+
+        // 1. 先将此知识库中的所有文章类型更新为普通
+        // 查出此 wiki 下所有的文章 ID
+        List<WikiCatalogDO> wikiCatalogDOS = wikiCatalogMapper.selectByWikiId(wikiId);
+        List<Long> articleIds = wikiCatalogDOS.stream()
+                .filter(wikiCatalogDO -> Objects.nonNull(wikiCatalogDO.getArticleId()))
+                .map(WikiCatalogDO::getArticleId).collect(Collectors.toList());
+
+        // 更新为普通文章类型
+        if (!CollectionUtils.isEmpty(articleIds)) {
+            articleMapper.updateByIds(ArticleDO.builder()
+                    .type(ArticleTypeEnum.NORMAL.getValue()).build(), articleIds);
+        }
+
+        // 2. 先删除所有此知识库下所有目录
+        wikiCatalogMapper.deleteByWikiId(wikiId);
+
+        // 3. 再重新插入新的目录数据
+        // 若入参传入的目录不为空
+        if (!CollectionUtils.isEmpty(catalogs)) {
+            // 重新设置 sort 排序字段的值
+            for (int i = 0; i < catalogs.size(); i++) {
+                UpdateWikiCatalogItemReqVO vo = catalogs.get(i);
+                List<UpdateWikiCatalogItemReqVO> children = vo.getChildren();
+                vo.setSort(i + 1);
+                if (!CollectionUtils.isEmpty(children)) {
+                    for (int j = 0; j < children.size(); j++) {
+                        children.get(j).setSort(j + 1);
+                    }
+                }
+            }
+
+            // VO 转 DO
+            catalogs.forEach(catalog -> {
+                // 一级目录
+                WikiCatalogDO wikiCatalogDO = WikiCatalogDO.builder()
+                        .wikiId(wikiId)
+                        .title(catalog.getTitle())
+                        .level(WikiCatalogLevelEnum.ONE.getValue())
+                        .sort(catalog.getSort())
+                        .build();
+                // 添加一级目录
+                wikiCatalogMapper.insert(wikiCatalogDO);
+
+                // 一级目录 ID
+                Long catalogId = wikiCatalogDO.getId();
+
+                // 获取下面的二级目录
+                List<UpdateWikiCatalogItemReqVO> children = catalog.getChildren();
+                // 需要被更新 type 字段的所有文章 ID
+                List<Long> updateArticleIds = Lists.newArrayList();
+                if (!CollectionUtils.isEmpty(children)) {
+                    List<WikiCatalogDO> level2Catalogs = Lists.newArrayList();
+                    // VO 转 DO
+                    children.forEach(child -> {
+                        level2Catalogs.add(WikiCatalogDO.builder()
+                                .wikiId(wikiId)
+                                .title(child.getTitle())
+                                .level(WikiCatalogLevelEnum.TWO.getValue())
+                                .sort(child.getSort())
+                                .articleId(child.getArticleId())
+                                .parentId(catalogId)
+                                .createTime(LocalDateTime.now())
+                                .updateTime(LocalDateTime.now())
+                                .isDeleted(Boolean.FALSE)
+                                .build());
+
+                        updateArticleIds.add(child.getArticleId());
+                    });
+
+                    // 批量插入二级目录数据
+                    wikiCatalogMapper.insertBatchSomeColumn(level2Catalogs);
+                    // 更新相关文章的 type 字段，知识库类型
+                    articleMapper.updateByIds(ArticleDO.builder()
+                            .type(ArticleTypeEnum.WIKI.getValue()).build(), updateArticleIds);
+                }
+            });
+        }
+
+        return Response.success();
+    }
+
+
+
 }
 
