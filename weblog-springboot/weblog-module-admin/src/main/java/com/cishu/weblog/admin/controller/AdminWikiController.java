@@ -1,9 +1,6 @@
 package com.cishu.weblog.admin.controller;
 
-import com.cishu.weblog.admin.model.vo.wiki.AddWikiReqVO;
-import com.cishu.weblog.admin.model.vo.wiki.DeleteWikiReqVO;
-import com.cishu.weblog.admin.model.vo.wiki.FindWikiPageListReqVO;
-import com.cishu.weblog.admin.model.vo.wiki.UpdateWikiIsTopReqVO;
+import com.cishu.weblog.admin.model.vo.wiki.*;
 import com.cishu.weblog.admin.service.AdminWikiService;
 import com.cishu.weblog.common.aspect.ApiOperationLog;
 import com.cishu.weblog.common.utils.Response;
@@ -61,6 +58,16 @@ public class AdminWikiController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Response updateWikiIsTop(@RequestBody @Validated UpdateWikiIsTopReqVO updateWikiIsTopReqVO) {
         return wikiService.updateWikiIsTop(updateWikiIsTopReqVO);
+    }
+
+
+
+    @PostMapping("/isPublish/update")
+    @ApiOperation(value = "更新知识库发布状态")
+    @ApiOperationLog(description = "更新知识库发布状态")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Response updateWikiIsPublish(@RequestBody @Validated UpdateWikiIsPublishReqVO updateWikiIsPublishReqVO) {
+        return wikiService.updateWikiIsPublish(updateWikiIsPublishReqVO);
     }
 
 

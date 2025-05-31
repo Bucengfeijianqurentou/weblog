@@ -183,5 +183,22 @@ public class AdminWikiServiceImpl implements AdminWikiService {
     }
 
 
+
+    /**
+     * 更新知识库发布状态
+     *
+     * @param updateWikiIsPublishReqVO
+     * @return
+     */
+    @Override
+    public Response updateWikiIsPublish(UpdateWikiIsPublishReqVO updateWikiIsPublishReqVO) {
+        Long wikiId = updateWikiIsPublishReqVO.getId();
+        Boolean isPublish = updateWikiIsPublishReqVO.getIsPublish();
+        // 更新发布状态
+        wikiMapper.updateById(WikiDO.builder().id(wikiId).isPublish(isPublish).build());
+        return Response.success();
+    }
+
+
 }
 

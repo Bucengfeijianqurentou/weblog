@@ -1,9 +1,6 @@
 package com.cishu.weblog.admin.service;
 
-import com.cishu.weblog.admin.model.vo.wiki.AddWikiReqVO;
-import com.cishu.weblog.admin.model.vo.wiki.DeleteWikiReqVO;
-import com.cishu.weblog.admin.model.vo.wiki.FindWikiPageListReqVO;
-import com.cishu.weblog.admin.model.vo.wiki.UpdateWikiIsTopReqVO;
+import com.cishu.weblog.admin.model.vo.wiki.*;
 import com.cishu.weblog.common.utils.Response;
 
 public interface AdminWikiService {
@@ -44,6 +41,15 @@ public interface AdminWikiService {
      * @return
      */
     Response updateWikiIsTop(UpdateWikiIsTopReqVO updateWikiIsTopReqVO);
+
+
+
+    /**
+     * 更新知识库发布状态
+     * @param updateWikiIsPublishReqVO
+     * @return
+     */
+    Response updateWikiIsPublish(UpdateWikiIsPublishReqVO updateWikiIsPublishReqVO);
 
 
 }
