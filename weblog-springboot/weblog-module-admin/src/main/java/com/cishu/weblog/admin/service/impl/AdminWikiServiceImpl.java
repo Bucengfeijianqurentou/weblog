@@ -16,6 +16,7 @@ import com.cishu.weblog.common.enums.WikiCatalogLevelEnum;
 import com.cishu.weblog.common.exception.BizException;
 import com.cishu.weblog.common.utils.PageResponse;
 import com.cishu.weblog.common.utils.Response;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.Comparator;
 
 @Service
 @Slf4j
@@ -221,6 +223,74 @@ public class AdminWikiServiceImpl implements AdminWikiService {
         wikiMapper.updateById(wikiDO);
         return Response.success();
     }
+
+
+
+    /**
+     * 查询知识库目录
+     *
+     * @param findWikiCatalogListReqVO
+     * @return
+     */
+    @Override
+    public Response findWikiCatalogList(FindWikiCatalogListReqVO findWikiCatalogListReqVO) {
+        Long wikiId = findWikiCatalogListReqVO.getId();
+
+        // 查询此知识库下所有目录
+        List<WikiCatalogDO> catalogDOS = wikiCatalogMapper.selectByWikiId(wikiId);
+
+        // DO 转 VO
+        // 组装一、二级目录结构
+        List<FindWikiCatalogListRspVO> vos = null;
+        if (!CollectionUtils.isEmpty(catalogDOS)) {
+            vos = Lists.newArrayList();
+
+            // 提取一级目录
+            List<WikiCatalogDO> level1Catalogs = catalogDOS.stream()
+                    .filter(catalogDO -> Objects.equals(catalogDO.getLevel(), WikiCatalogLevelEnum.ONE.getValue())) // 一级目录
+                    .sorted(Comparator.comparing(WikiCatalogDO::getSort)) // 升序排列
+                    .collect(Collectors.toList());
+
+            // 循环一级目录 DO 集合，转 VO
+            for (WikiCatalogDO level1Catalog : level1Catalogs) {
+                vos.add(FindWikiCatalogListRspVO.builder()
+                        .id(level1Catalog.getId())
+                        .articleId(level1Catalog.getArticleId())
+                        .title(level1Catalog.getTitle())
+                        .level(level1Catalog.getLevel())
+                        .sort(level1Catalog.getSort())
+                        .editing(Boolean.FALSE)
+                        .build());
+            }
+
+            // 设置一级目录下，二级目录的数据
+            vos.forEach(level1Catalog -> {
+                Long parentId = level1Catalog.getId();
+                // 提取二级目录
+                List<WikiCatalogDO> level2CatalogDOS = catalogDOS.stream()
+                        .filter(catalogDO -> Objects.equals(catalogDO.getParentId(), parentId)
+                                && Objects.equals(catalogDO.getLevel(), WikiCatalogLevelEnum.TWO.getValue()))
+                        .sorted(Comparator.comparing(WikiCatalogDO::getSort))
+                        .collect(Collectors.toList());
+
+                // 二级目录 DO 转 VO
+                List<FindWikiCatalogListRspVO> level2Catalogs = level2CatalogDOS.stream()
+                        .map(catalogDO -> FindWikiCatalogListRspVO.builder()
+                                .id(catalogDO.getId())
+                                .articleId(catalogDO.getArticleId())
+                                .title(catalogDO.getTitle())
+                                .level(catalogDO.getLevel())
+                                .sort(catalogDO.getSort())
+                                .editing(Boolean.FALSE)
+                                .build())
+                        .collect(Collectors.toList());
+                level1Catalog.setChildren(level2Catalogs);
+            });
+        }
+
+        return Response.success(vos);
+    }
+
 
 
 }
