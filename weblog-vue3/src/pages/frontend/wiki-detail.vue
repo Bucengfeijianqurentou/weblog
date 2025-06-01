@@ -218,6 +218,9 @@
                             </div>
                         </nav>
                     </article>
+
+                    <!-- 评论组件 -->
+                    <Comment customeCss=""></Comment>
                 </div>
             </div>
             <!-- 右边栏 -->
@@ -249,6 +252,7 @@ import ScrollToTopButton from '@/layouts/frontend/components/ScrollToTopButton.v
 import {
     initAccordions,
 } from 'flowbite'
+import Comment from '@/components/Comment.vue'
 
 onMounted(() => {
     nextTick(() => initAccordions())

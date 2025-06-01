@@ -175,6 +175,9 @@
 
 
                 </div>
+
+                <!-- 评论组件 -->
+                <Comment></Comment>
             </div>
 
             <!-- 右边侧边栏，占用一列 -->
@@ -217,6 +220,7 @@ import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/tokyo-night-dark.css'
 import { initTooltips } from 'flowbite'
+import Comment from '@/components/Comment.vue'
 
 import { useDark } from '@vueuse/core'
 
