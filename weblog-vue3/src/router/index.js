@@ -15,6 +15,7 @@ import AdminCategoryList from '@/pages/admin/category-list.vue'
 import AdminTagList from '@/pages/admin/tag-list.vue'
 import AdminBlogSettings from '@/pages/admin/blog-settings.vue'
 import AdminWikiList from '@/pages/admin/wiki-list.vue'
+import AdminCommentList from '@/pages/admin/comment-list.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Admin from '@/layouts/admin/admin.vue'
 
@@ -143,6 +144,13 @@ const routes = [
                 component: AdminWikiList,
                 meta: {
                     title: '知识库管理'
+                }
+            },
+            {
+                path: "/admin/comment/list",
+                component: AdminCommentList,
+                meta: {
+                    title: '评论管理'
                 }
             },
         ]

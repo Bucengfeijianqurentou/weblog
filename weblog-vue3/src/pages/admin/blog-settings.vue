@@ -190,7 +190,7 @@ const csdnSwitchChange = (checked) => {
 // 初始化博客设置数据，并渲染到页面上
 function initBlogSettings() {
     getBlogSettingsDetail().then((e) => {
-        if (e.success = true) {
+        if (e.success) {
             // 设置表单数据
             form.name = e.data.name
             form.author = e.data.author
@@ -218,6 +218,10 @@ function initBlogSettings() {
                 isCSDNChecked.value = true
                 form.csdnHomepage = e.data.csdnHomepage
             }
+
+            form.isCommentSensiWordOpen = e.data.isCommentSensiWordOpen
+            form.isCommentExamineOpen = e.data.isCommentExamineOpen
+            form.mail = e.data.mail
         }
     })
 }
