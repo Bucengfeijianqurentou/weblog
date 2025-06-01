@@ -16,7 +16,7 @@
                                 <img class="rounded-t-lg h-48 w-full"
                                     :src="article.cover" />
                             </a>
-                            <div class="p-5">
+                            <div class="p-5 flex flex-col min-h-max">
                                 <!-- 标签 -->
                                 <div class="mb-3">
                                     <span v-for="(tag, tagIndex) in article.tags" :key="tagIndex" @click="goTagArticleListPage(tag.id, tag.name)"
@@ -36,7 +36,7 @@
                                 <!-- 文章摘要 -->
                                 <p v-if="article.summary" class="mb-3 font-normal text-gray-500 dark:text-gray-400">{{ article.summary }}</p>
                                 <!-- 文章发布时间、所属分类 -->
-                                <p class="flex items-center font-normal text-gray-400 text-sm dark:text-gray-400">
+                                <p class="mt-auto flex items-center font-normal text-gray-400 text-sm dark:text-gray-400">
                                     <!-- 发布时间 -->
                                     <svg class="inline w-3 h-3 mr-2 text-gray-400" aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
