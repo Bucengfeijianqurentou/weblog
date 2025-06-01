@@ -2,6 +2,7 @@ package com.cishu.weblog.web.service;
 
 import com.cishu.weblog.common.utils.Response;
 import com.cishu.weblog.web.model.vo.comment.FindQQUserInfoReqVO;
+import com.cishu.weblog.web.model.vo.comment.PublishCommentReqVO;
 
 public interface CommentService {
 
@@ -12,6 +13,14 @@ public interface CommentService {
      * @return
      */
     Response findQQUserInfo(FindQQUserInfoReqVO findQQUserInfoReqVO);
+
+
+    /**
+     * 发布评论
+     * @param publishCommentReqVO
+     * @return
+     */
+    Response publishComment(PublishCommentReqVO publishCommentReqVO);
 
 
 }

@@ -3,6 +3,7 @@ package com.cishu.weblog.web.controller;
 import com.cishu.weblog.common.aspect.ApiOperationLog;
 import com.cishu.weblog.common.utils.Response;
 import com.cishu.weblog.web.model.vo.comment.FindQQUserInfoReqVO;
+import com.cishu.weblog.web.model.vo.comment.PublishCommentReqVO;
 import com.cishu.weblog.web.service.CommentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,5 +28,17 @@ public class CommentController {
     public Response findQQUserInfo(@RequestBody @Validated FindQQUserInfoReqVO findQQUserInfoReqVO) {
         return commentService.findQQUserInfo(findQQUserInfoReqVO);
     }
+
+
+
+
+    @PostMapping("/publish")
+    @ApiOperation(value = "发布评论")
+    @ApiOperationLog(description = "发布评论")
+    public Response publishComment(@RequestBody @Validated PublishCommentReqVO publishCommentReqVO) {
+        return commentService.publishComment(publishCommentReqVO);
+    }
+
+
 
 }

@@ -1,10 +1,16 @@
 package com.cishu.weblog.web.service.impl;
 
+import com.cishu.weblog.common.domain.dos.BlogSettingsDO;
+import com.cishu.weblog.common.domain.dos.CommentDO;
+import com.cishu.weblog.common.domain.mapper.BlogSettingsMapper;
+import com.cishu.weblog.common.domain.mapper.CommentMapper;
+import com.cishu.weblog.common.enums.CommentStatusEnum;
 import com.cishu.weblog.common.enums.ResponseCodeEnum;
 import com.cishu.weblog.common.exception.BizException;
 import com.cishu.weblog.common.utils.Response;
 import com.cishu.weblog.web.model.vo.comment.FindQQUserInfoReqVO;
 import com.cishu.weblog.web.model.vo.comment.FindQQUserInfoRspVO;
+import com.cishu.weblog.web.model.vo.comment.PublishCommentReqVO;
 import com.cishu.weblog.web.service.CommentService;
 import com.cishu.weblog.web.utls.StringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,6 +34,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private BlogSettingsMapper blogSettingsMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
+
 
     @Value("${api-key}")
     private String apiKey;
@@ -71,5 +85,72 @@ public class CommentServiceImpl implements CommentService {
             throw new RuntimeException(e);
         }
     }
+
+
+
+
+
+    /**
+     * 发布评论
+     *
+     * @param publishCommentReqVO
+     * @return
+     */
+    @Override
+    public Response publishComment(PublishCommentReqVO publishCommentReqVO) {
+        // 回复的评论 ID
+        Long replyCommentId = publishCommentReqVO.getReplyCommentId();
+        // 评论内容
+        String content = publishCommentReqVO.getContent();
+        // 昵称
+        String nickname = publishCommentReqVO.getNickname();
+
+        // 查询博客设置相关信息（约定的 ID 为 1）
+        BlogSettingsDO blogSettingsDO = blogSettingsMapper.selectById(1L);
+        // 是否开启了敏感词过滤
+        boolean isCommentSensiWordOpen = blogSettingsDO.getIsCommentSensiWordOpen();
+        // 是否开启了审核
+        boolean isCommentExamineOpen = blogSettingsDO.getIsCommentExamineOpen();
+
+        // 设置默认状态（正常）
+        Integer status = CommentStatusEnum.NORMAL.getCode();
+        // 审核不通过原因
+        String reason = "";
+
+        // 如果开启了审核, 设置状态为待审核，等待博主后台审核通过
+        if (isCommentExamineOpen) {
+            status = CommentStatusEnum.WAIT_EXAMINE.getCode();
+        }
+
+        // 评论内容是否包含敏感词
+        boolean isContainSensitiveWord = false;
+        // 是否开启了敏感词过滤
+        if (isCommentSensiWordOpen) {
+            // todo 敏感词过滤，先空着
+        }
+
+        // 构建 DO 对象
+        CommentDO commentDO = CommentDO.builder()
+                .avatar(publishCommentReqVO.getAvatar())
+                .content(content)
+                .mail(publishCommentReqVO.getMail())
+                .createTime(LocalDateTime.now())
+                .nickname(nickname)
+                .routerUrl(publishCommentReqVO.getRouterUrl())
+                .website(publishCommentReqVO.getWebsite())
+                .replyCommentId(replyCommentId)
+                .parentCommentId(publishCommentReqVO.getParentCommentId())
+                .status(status)
+                .reason(reason)
+                .build();
+
+        // 新增评论
+        commentMapper.insert(commentDO);
+
+        return Response.success();
+    }
+
+
+
 
 }
