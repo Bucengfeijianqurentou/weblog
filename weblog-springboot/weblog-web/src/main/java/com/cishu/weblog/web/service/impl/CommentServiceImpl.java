@@ -9,6 +9,7 @@ import com.cishu.weblog.common.enums.ResponseCodeEnum;
 import com.cishu.weblog.common.exception.BizException;
 import com.cishu.weblog.common.utils.Response;
 import com.cishu.weblog.web.convert.CommentConvert;
+import com.cishu.weblog.web.event.PublishCommentEvent;
 import com.cishu.weblog.web.model.vo.comment.*;
 import com.cishu.weblog.web.service.CommentService;
 import com.cishu.weblog.web.utls.StringUtil;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -44,6 +46,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Autowired
     private IllegalWordsSearch wordsSearch;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
 
     @Value("${api-key}")
@@ -163,6 +168,10 @@ public class CommentServiceImpl implements CommentService {
         // 新增评论
         commentMapper.insert(commentDO);
 
+        Long commentId = commentDO.getId();
+
+        // 发送评论发布事件
+        eventPublisher.publishEvent(new PublishCommentEvent(this, commentId));
 
         // 给予前端对应的提示信息
         if (isContainSensitiveWord)
