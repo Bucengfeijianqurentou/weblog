@@ -1,6 +1,7 @@
 package com.cishu.weblog.admin.service;
 
 import com.cishu.weblog.admin.model.vo.comment.DeleteCommentReqVO;
+import com.cishu.weblog.admin.model.vo.comment.ExamineCommentReqVO;
 import com.cishu.weblog.admin.model.vo.comment.FindCommentPageListReqVO;
 import com.cishu.weblog.common.utils.Response;
 
@@ -23,5 +24,15 @@ public interface AdminCommentService {
      * @return
      */
     Response deleteComment(DeleteCommentReqVO deleteCommentReqVO);
+
+
+
+
+    /**
+     * 评论审核
+     * @param examineCommentReqVO
+     * @return
+     */
+    Response examine(ExamineCommentReqVO examineCommentReqVO);
 
 }

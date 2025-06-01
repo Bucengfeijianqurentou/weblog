@@ -1,6 +1,7 @@
 package com.cishu.weblog.admin.controller;
 
 import com.cishu.weblog.admin.model.vo.comment.DeleteCommentReqVO;
+import com.cishu.weblog.admin.model.vo.comment.ExamineCommentReqVO;
 import com.cishu.weblog.admin.model.vo.comment.FindCommentPageListReqVO;
 import com.cishu.weblog.admin.service.AdminCommentService;
 import com.cishu.weblog.common.aspect.ApiOperationLog;
@@ -23,6 +24,8 @@ public class AdminCommentController {
     @Autowired
     private AdminCommentService commentService;
 
+
+
     @PostMapping("/list")
     @ApiOperation(value = "查询评论分页数据")
     @ApiOperationLog(description = "查询评论分页数据")
@@ -40,6 +43,16 @@ public class AdminCommentController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Response deleteComment(@RequestBody @Validated DeleteCommentReqVO deleteCommentReqVO) {
         return commentService.deleteComment(deleteCommentReqVO);
+    }
+
+
+
+    @PostMapping("/examine")
+    @ApiOperation(value = "评论审核")
+    @ApiOperationLog(description = "评论审核")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Response examinePass(@RequestBody @Validated ExamineCommentReqVO examineCommentReqVO) {
+        return commentService.examine(examineCommentReqVO);
     }
 
 
