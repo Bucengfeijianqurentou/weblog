@@ -1,10 +1,15 @@
 package com.cishu.weblog.common.domain.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cishu.weblog.common.domain.dos.CommentDO;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 public interface CommentMapper extends BaseMapper<CommentDO> {
 
@@ -21,6 +26,34 @@ public interface CommentMapper extends BaseMapper<CommentDO> {
                 .orderByDesc(CommentDO::getCreateTime) // 按创建时间倒序
         );
     }
+
+
+
+
+    /**
+     * 分页查询
+     * @param current
+     * @param size
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    default Page<CommentDO> selectPageList(Long current, Long size, String routerUrl,
+                                           LocalDate startDate, LocalDate endDate, Integer status) {
+        // 分页对象(查询第几页、每页多少数据)
+        Page<CommentDO> page = new Page<>(current, size);
+
+        // 构建查询条件
+        LambdaQueryWrapper<CommentDO> wrapper = Wrappers.<CommentDO>lambdaQuery()
+                .like(StringUtils.isNotBlank(routerUrl), CommentDO::getRouterUrl, routerUrl) // like 模糊查询
+                .eq(Objects.nonNull(status), CommentDO::getStatus, status) // 评论状态
+                .ge(Objects.nonNull(startDate), CommentDO::getCreateTime, startDate) // 大于等于 startDate
+                .le(Objects.nonNull(endDate), CommentDO::getCreateTime, endDate)  // 小于等于 endDate
+                .orderByDesc(CommentDO::getCreateTime); // 按创建时间倒叙
+
+        return selectPage(page, wrapper);
+    }
+
 
 
 }
