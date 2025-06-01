@@ -8,9 +8,8 @@ import com.cishu.weblog.common.enums.CommentStatusEnum;
 import com.cishu.weblog.common.enums.ResponseCodeEnum;
 import com.cishu.weblog.common.exception.BizException;
 import com.cishu.weblog.common.utils.Response;
-import com.cishu.weblog.web.model.vo.comment.FindQQUserInfoReqVO;
-import com.cishu.weblog.web.model.vo.comment.FindQQUserInfoRspVO;
-import com.cishu.weblog.web.model.vo.comment.PublishCommentReqVO;
+import com.cishu.weblog.web.convert.CommentConvert;
+import com.cishu.weblog.web.model.vo.comment.*;
 import com.cishu.weblog.web.service.CommentService;
 import com.cishu.weblog.web.utls.StringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,9 +25,7 @@ import toolgood.words.IllegalWordsSearch;
 import toolgood.words.IllegalWordsSearchResult;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -176,6 +173,66 @@ public class CommentServiceImpl implements CommentService {
 
 
         return Response.success();
+    }
+
+
+
+
+
+    /**
+     * 查询页面所有评论
+     *
+     * @param findCommentListReqVO
+     * @return
+     */
+    @Override
+    public Response findCommentList(FindCommentListReqVO findCommentListReqVO) {
+        // 路由地址
+        String routerUrl = findCommentListReqVO.getRouterUrl();
+
+        // 查询该路由地址下所有评论（仅查询状态正常的）
+        List<CommentDO> commentDOS = commentMapper.selectByRouterUrlAndStatus(routerUrl, CommentStatusEnum.NORMAL.getCode());
+        // 总评论数
+        Integer total = commentDOS.size();
+
+        List<FindCommentItemRspVO> vos = null;
+        // DO 转 VO
+        if (!CollectionUtils.isEmpty(commentDOS)) {
+            // 一级评论
+            vos = commentDOS.stream()
+                    .filter(commentDO -> Objects.isNull(commentDO.getParentCommentId())) // parentCommentId 父级 ID 为空，则表示为一级评论
+                    .map(commentDO -> CommentConvert.INSTANCE.convertDO2VO(commentDO))
+                    .collect(Collectors.toList());
+
+            // 循环设置评论回复数据
+            vos.forEach(vo -> {
+                Long commentId = vo.getId();
+                List<FindCommentItemRspVO> childComments = commentDOS.stream()
+                        .filter(commentDO -> Objects.equals(commentDO.getParentCommentId(), commentId)) // 过滤出一级评论下所有子评论
+                        .sorted(Comparator.comparing(CommentDO::getCreateTime)) // 按发布时间升序排列
+                        .map(commentDO -> {
+                            FindCommentItemRspVO findPageCommentRspVO = CommentConvert.INSTANCE.convertDO2VO(commentDO);
+                            Long replyCommentId = commentDO.getReplyCommentId();
+                            // 若二级评论的 replayCommentId 不等于一级评论 ID, 前端则需要展示【回复 @ xxx】，需要设置回复昵称
+                            if (!Objects.equals(replyCommentId, commentId)) {
+                                // 设置回复用户的昵称
+                                Optional<CommentDO> optionalCommentDO = commentDOS.stream()
+                                        .filter(commentDO1 -> Objects.equals(commentDO1.getId(), replyCommentId)).findFirst();
+                                if (optionalCommentDO.isPresent()) {
+                                    findPageCommentRspVO.setReplyNickname(optionalCommentDO.get().getNickname());
+                                }
+                            }
+                            return findPageCommentRspVO;
+                        }).collect(Collectors.toList());
+
+                vo.setChildComments(childComments);
+            });
+        }
+
+        return Response.success(FindCommentListRspVO.builder()
+                .total(total)
+                .comments(vos)
+                .build());
     }
 
 

@@ -2,6 +2,7 @@ package com.cishu.weblog.web.controller;
 
 import com.cishu.weblog.common.aspect.ApiOperationLog;
 import com.cishu.weblog.common.utils.Response;
+import com.cishu.weblog.web.model.vo.comment.FindCommentListReqVO;
 import com.cishu.weblog.web.model.vo.comment.FindQQUserInfoReqVO;
 import com.cishu.weblog.web.model.vo.comment.PublishCommentReqVO;
 import com.cishu.weblog.web.service.CommentService;
@@ -37,6 +38,15 @@ public class CommentController {
     @ApiOperationLog(description = "发布评论")
     public Response publishComment(@RequestBody @Validated PublishCommentReqVO publishCommentReqVO) {
         return commentService.publishComment(publishCommentReqVO);
+    }
+
+
+
+    @PostMapping("/list")
+    @ApiOperation(value = "获取页面所有评论")
+    @ApiOperationLog(description = "获取页面所有评论")
+    public Response findPageComments(@RequestBody @Validated FindCommentListReqVO findCommentListReqVO) {
+        return commentService.findCommentList(findCommentListReqVO);
     }
 
 
