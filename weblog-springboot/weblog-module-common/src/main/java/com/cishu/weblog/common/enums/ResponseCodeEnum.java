@@ -31,7 +31,7 @@ public enum ResponseCodeEnum implements BaseExceptionInterface {
     NOT_QQ_NUMBER("20014", "QQ 号格式不正确"),
     COMMENT_CONTAIN_SENSITIVE_WORD("20015", "评论内容中包含敏感词，请重新编辑后再提交"),
     COMMENT_WAIT_EXAMINE("20016", "评论已提交, 等待博主审核通过"),
-
+    COMMENT_NOT_FOUND("20017", "该评论不存在"),
 
 
 

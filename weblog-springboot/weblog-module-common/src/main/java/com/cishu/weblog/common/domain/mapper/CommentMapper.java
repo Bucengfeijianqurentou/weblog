@@ -56,4 +56,30 @@ public interface CommentMapper extends BaseMapper<CommentDO> {
 
 
 
+
+    /**
+     * 根据 reply_comment_id 查询评论
+     * @param replyCommentId
+     * @return
+     */
+    default List<CommentDO> selectByReplyCommentId(Long replyCommentId) {
+        return selectList(Wrappers.<CommentDO>lambdaQuery()
+                .eq(CommentDO::getReplyCommentId, replyCommentId)
+                .orderByDesc(CommentDO::getCreateTime)
+        );
+    }
+
+
+    /**
+     * 根据 parent_comment_id 删除
+     * @param id
+     * @return
+     */
+    default int deleteByParentCommentId(Long id) {
+        return delete(Wrappers.<CommentDO>lambdaQuery()
+                .eq(CommentDO::getParentCommentId, id));
+    }
+
+
+
 }
