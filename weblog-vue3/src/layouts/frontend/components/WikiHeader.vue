@@ -16,7 +16,7 @@
 
                     <!-- 博客 LOGO 、博客名称 -->
                     <a href="/" class="flex items-center">
-                        <img :src="blogSettingsStore.blogSettings.logo" class="h-8 mr-3 rounded-full" alt="Weblog Logo" />
+                        <img :src="blogSettingsStore.blogSettings.logo" class="h-8 w-8 mr-3 rounded-full object-cover " alt="Weblog Logo" />
                         <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-gray-400">{{
                             blogSettingsStore.blogSettings.name }}</span>
                     </a>
@@ -464,7 +464,7 @@
                         <button type="button" class="hover:bg-gray-100 flex items-center justify-between w-full py-3 px-3 rounded-lg 
                             font-medium rtl:text-right text-gray-600 dark:text-gray-400 gap-3 dark:hover:bg-gray-800"
                             :data-accordion-target="'#drawer-accordion-flush-body-' + catalog.id"
-                            :aria-expanded="[catalog.children.some(item => item.articleId == route.query.articleId) ? true : false]"
+                            :aria-expanded="[Array.isArray(catalog.children) && catalog.children.some(item => item.articleId == route.query.articleId) ? true : false]"
                             :aria-controls="'drawer-accordion-flush-body-' + catalog.id">
                             <!-- 一级目录标题 -->
                             <span class="flex items-center" v-html="catalog.title"></span>
