@@ -19,7 +19,7 @@
                                 <button type="button" class="hover:bg-gray-100 flex items-center justify-between w-full py-3 px-3 rounded-lg 
                             font-medium rtl:text-right text-gray-600 dark:text-gray-400 gap-3 dark:hover:bg-gray-800"
                                     :data-accordion-target="'#accordion-flush-body-' + catalog.id"
-                                    :aria-expanded="[catalog.children.some(item => item.articleId == route.query.articleId) ? true : false]"
+                                    :aria-expanded="[Array.isArray(catalog.children) && catalog.children.some(item => item.articleId == route.query.articleId) ? true : false]"
                                     :aria-controls="'accordion-flush-body-' + catalog.id">
                                     <!-- 一级目录标题 -->
                                     <span class="flex items-center" v-html="catalog.title"></span>

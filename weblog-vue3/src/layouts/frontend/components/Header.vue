@@ -4,7 +4,7 @@
             <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <!-- 博客 LOGO 、博客名称 -->
                 <a href="/" class="flex items-center">
-                    <img :src="blogSettingsStore.blogSettings.logo" class="h-8 mr-3 rounded-full" alt="Weblog Logo" />
+                    <img :src="blogSettingsStore.blogSettings.logo" class="h-8 w-8 mr-3 rounded-full object-cover" alt="Weblog Logo" />
                     <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">{{
                         blogSettingsStore.blogSettings.name }}</span>
                 </a>
